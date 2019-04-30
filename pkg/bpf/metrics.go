@@ -16,6 +16,7 @@ package bpf
 
 import (
 	"github.com/cilium/cilium/pkg/metrics"
+	"github.com/cilium/cilium/pkg/option"
 
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -47,15 +48,17 @@ var (
 )
 
 func init() {
-	metricSyscallDuration = prometheus.NewHistogramVec(prometheus.HistogramOpts{
-		Namespace: metrics.Namespace,
-		Subsystem: metricSubsystem,
-		Name:      "syscall_duration_seconds",
-		Help:      "Duration of BPF system calls",
-	}, []string{metricLabelOperation, metrics.LabelOutcome})
+	if option.Config.MetricsLevel >= option.MetricLevelSyscall {
+		metricSyscallDuration = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+			Namespace: metrics.Namespace,
+			Subsystem: metricSubsystem,
+			Name:      "syscall_duration_seconds",
+			Help:      "Duration of BPF system calls",
+		}, []string{metricLabelOperation, metrics.LabelOutcome})
 
-	if err := metrics.Register(metricSyscallDuration); err != nil {
-		log.WithError(err).Fatal("unable to register prometheus metric")
+		if err := metrics.Register(metricSyscallDuration); err != nil {
+			log.WithError(err).Fatal("unable to register prometheus metric")
+		}
 	}
 
 	metricMapOps = prometheus.NewCounterVec(prometheus.CounterOpts{
