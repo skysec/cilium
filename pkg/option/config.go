@@ -442,6 +442,22 @@ const (
 
 	// K8sEventHandover is the name of the K8sEventHandover option
 	K8sEventHandover = "enable-k8s-event-handover"
+
+	// MetricsLevel represents the level of metrics that Cilium should expose
+	// the higher the level more metrics it exposes.
+	MetricsLevel = "metrics-level"
+)
+
+// Metric Levels
+const (
+	// MetricLevelNone should not expose any metric!
+	MetricLevelNone int = iota
+	// MetricLevelCore should expose core TBD
+	MetricLevelCore
+	// MetricLevelSyscall should expose syscalls
+	MetricLevelSyscall
+	// MetricLevelAll should expose all metrics available.
+	MetricLevelAll
 )
 
 // FQDNS variables
@@ -891,6 +907,10 @@ type DaemonConfig struct {
 	// mirroring it into the kvstore for reduced overhead in large
 	// clusters.
 	K8sEventHandover bool
+
+	// MetricsLevel represents the level of metrics that Cilium should expose
+	// the higher the level more metrics it exposes.
+	MetricsLevel int
 }
 
 var (
@@ -1176,6 +1196,7 @@ func (c *DaemonConfig) Populate() {
 	c.Logstash = viper.GetBool(Logstash)
 	c.Masquerade = viper.GetBool(Masquerade)
 	c.InstallIptRules = viper.GetBool(InstallIptRules)
+	c.MetricsLevel = viper.GetInt(MetricsLevel)
 	c.ModePreFilter = viper.GetString(PrefilterMode)
 	c.MonitorAggregation = viper.GetString(MonitorAggregationName)
 	c.MonitorQueueSize = viper.GetInt(MonitorQueueSizeName)
