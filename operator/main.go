@@ -189,6 +189,8 @@ func runOperator(cmd *cobra.Command) {
 		enableUnmanagedKubeDNSController()
 	}
 
+	startSynchronizingCiliumNodes()
+
 	err := enableCNPWatcher()
 	if err != nil {
 		log.WithError(err).WithField("subsys", "CNPWatcher").Fatal(
